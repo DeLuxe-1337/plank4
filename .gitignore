@@ -1,0 +1,4 @@
+obj/tokenizer.o
+bin/app
+obj/main.o
+.vscode/c_cpp_properties.json
