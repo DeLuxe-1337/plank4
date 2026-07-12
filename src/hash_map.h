@@ -3,9 +3,9 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
-#include <stdbool.h>
 #include <stddef.h>
 
+#include "bool.h"
 #include "string_view.h"
 
 typedef struct {

@@ -1,5 +1,7 @@
 #pragma once
 #include "arena.h"
+#include "bool.h"
+#include "some.h"
 #include "symbol.h"
 #include "tokenizer.h"
 #include "type.h"
@@ -121,5 +123,6 @@ Ast *ast_identifier(Arena *arena, StringView name);
 Ast *ast_integer(Arena *arena, uint64_t value);
 
 Ast *ast_binary(Arena *arena, Token op, Ast *lhs, Ast *rhs);
+Ast *ast_function(Arena *arena, Ast *decl, Ast *body);
 
 #endif

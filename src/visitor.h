@@ -10,9 +10,11 @@
 typedef struct {
     LLVMModuleRef module;
     LLVMBuilderRef builder;
+    Arena* arena;
 } Visitor;
 
-Visitor* visitor_create(const char* name);
+Visitor* visitor_create(Arena* arena, const char* name);
+void visitor_cleanup(Visitor *v);
 
 Some visit_expr(Visitor* visitor, Ast *n);
 void visit_stmt(Visitor* visitor, Ast *n);

@@ -19,7 +19,7 @@ struct ArenaBlock {
   size_t used;
   size_t size;
 
-  unsigned char* data[];
+  unsigned char data[];
 };
 
 typedef struct {
@@ -33,7 +33,7 @@ static inline size_t arena_align_up(size_t n, size_t align) {
 
 static inline ArenaBlock *arena_new_block(size_t size) {
   printf("arena_new_block size=%zu\n", size);
-  ArenaBlock *block = (ArenaBlock *)malloc(sizeof(ArenaBlock) + size);
+  ArenaBlock *block = (ArenaBlock *)malloc(sizeof(*block) + size);
 
   assert(block);
 
@@ -67,6 +67,12 @@ static inline void *arena_alloc(Arena *arena, size_t size) {
     arena->head = new_block;
 
     block = new_block;
+
+    printf("arena;\nblock=%p\n", (void *)block);
+    printf("data=%p\n", (void *)block->data);
+    printf("used=%zu\n", block->used);
+    printf("size=%zu\n", block->size);
+    printf("alloc=%zu\nend_arena;\n", size);
   }
 
   void *ptr = block->data + block->used;

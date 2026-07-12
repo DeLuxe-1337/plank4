@@ -1,8 +1,9 @@
 #pragma once
+#include "arena.h"
 #ifndef STRING_VIEW_H
 #define STRING_VIEW_H
 
-#include <stdbool.h>
+#include "bool.h"
 #include <stddef.h>
 #include <string.h>
 
@@ -27,6 +28,15 @@ static inline bool sv_equal(StringView a, StringView b) {
 
 static inline bool sv_equal_cstr(StringView a, const char *b) {
   return sv_equal(a, sv_from_cstr(b));
+}
+
+static char *arena_sv_to_cstr(Arena *arena, StringView sv) {
+  char *s = (char *)arena_alloc(arena, sv.len + 1);
+
+  memcpy(s, sv.data, sv.len);
+  s[sv.len] = '\0';
+
+  return s;
 }
 
 #endif

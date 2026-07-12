@@ -1,11 +1,13 @@
-#pragma once
+#ifndef SOME_H
+#define SOME_H
+
+#include "bool.h"
 
 typedef struct {
-    void* ptr;
-    bool nil;
+  void *ptr;
+  bool nil;
 } Some;
 
-inline Some some(void* value) {
-    Some s = {value, false};
-    return s;
-}
+Some some(void *value, bool nil);
+
+#endif

@@ -1,6 +1,9 @@
 #pragma once
+#include "arena.h"
+#include "bool.h"
 #include "string_view.h"
 #include "vector.h"
+#include <stdlib.h>
 #ifndef TYPE_H
 #define TYPE_H
 
@@ -52,5 +55,7 @@ struct Type {
     } record;
   };
 };
+
+Type *type_new(Arena *arena, TypeKind kind);
 
 #endif

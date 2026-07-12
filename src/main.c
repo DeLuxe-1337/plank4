@@ -1,6 +1,7 @@
 #include "arena.h"
 #include "ast.h"
 #include "tokenizer.h"
+#include "visitor.h"
 #include <llvm-c/Core.h>
 #include <llvm-c/Target.h>
 #include <llvm-c/TargetMachine.h>
@@ -8,51 +9,36 @@
 
 int main(void) {
   printf("Hello, world\n");
-  // const char *source = "function main {}";
+  const char *source = "function main {}";
 
-  // Lexer lex = {
-  //     .start = source,
-  //     .current = source,
-  //     .line = 1,
-  //     .column = 1,
-  // };
+  Lexer lex = {
+      .start = source,
+      .current = source,
+      .line = 1,
+      .column = 1,
+  };
 
-  // Arena arena;
-  // arena_init(&arena, sizeof(Ast));
+  Token tok;
 
-  // Token plus = make_token(&lex, TOK_PLUS, NULL, 0, 0);
+  do {
+    tok = lexer_next(&lex);
 
-  // Ast *expr = ast_binary(&arena, plus, ast_identifier(&arena, SV("x")),
-  //                        ast_integer(&arena, 5));
-  // printf("Hello, world\n");
+    printf("%-20s '%.*s' (%u:%u)\n", token_kind_name(tok.kind), (int)tok.length,
+           tok.begin, tok.line, tok.column);
 
-  // ast_print(expr, 0);
+  } while (tok.kind != TOK_EOF);
 
-  // Token tok;
+  Arena arena;
+  arena_init(&arena, sizeof(Ast));
 
-  // do {
-  //   tok = lexer_next(&lex);
+  Token plus = make_token(&lex, TOK_PLUS, NULL, 0, 0);
 
-  //   printf("%-20s '%.*s' (%u:%u)\n", token_kind_name(tok.kind),
-  //   (int)tok.length,
-  //          tok.begin, tok.line, tok.column);
+  Ast *stmt = ast_function(&arena, ast_identifier(&arena, SV("main")), NULL);
 
-  // } while (tok.kind != TOK_EOF);
+  ast_print(stmt, 0);
 
-  // arena_destroy(&arena);
-
-  LLVMModuleRef module = LLVMModuleCreateWithName("my_module");
-
-  LLVMTypeRef i32 = LLVMInt32Type();
-  LLVMTypeRef fn_type = LLVMFunctionType(i32, NULL, 0, 0);
-  LLVMValueRef fn = LLVMAddFunction(module, "main", fn_type);
-
-  LLVMBasicBlockRef entry = LLVMAppendBasicBlock(fn, "entry");
-
-  LLVMBuilderRef builder = LLVMCreateBuilder();
-  LLVMPositionBuilderAtEnd(builder, entry);
-
-  LLVMBuildRet(builder, LLVMConstInt(i32, 0, 0));
+  Visitor *visitor = visitor_create(&arena, "module");
+  visit_stmt(visitor, stmt);
 
   // Initialize LLVM targets
   LLVMInitializeNativeTarget();
@@ -75,16 +61,20 @@ int main(void) {
                               LLVMRelocDefault, LLVMCodeModelDefault);
 
   // Emit object file
-  if (LLVMTargetMachineEmitToFile(machine, module, "main.s", LLVMAssemblyFile,
-                                  &error)) {
+  if (LLVMTargetMachineEmitToFile(machine, visitor->module, "main.s",
+                                  LLVMAssemblyFile, &error)) {
     fprintf(stderr, "%s\n", error);
     return 1;
   }
 
+  char *ir = LLVMPrintModuleToString(visitor->module);
+  printf("%s\n", ir);
+
+  LLVMDisposeMessage(ir);
   LLVMDisposeMessage(triple);
-  LLVMDisposeBuilder(builder);
-  LLVMDisposeModule(module);
   LLVMDisposeTargetMachine(machine);
+  visitor_cleanup(visitor);
+  arena_destroy(&arena);
 
   return 0;
 }

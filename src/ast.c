@@ -1,4 +1,5 @@
 #include "ast.h"
+#include "type.h"
 
 #pragma once
 
@@ -201,5 +202,15 @@ Ast *ast_binary(Arena *arena, Token op, Ast *lhs, Ast *rhs) {
   n->binary.lhs = lhs;
   n->binary.rhs = rhs;
 
+  return n;
+}
+Ast *ast_function(Arena *arena, Ast *decl, Ast *body) {
+  Ast *n = ast_new(arena, AST_FUNCTION);
+  n->type = type_new(arena, TYPE_FUNCTION);
+  n->type->function.return_type = type_new(arena, TYPE_VOID);
+  n->type->function.variadic = false;
+
+  n->function.decl = decl;
+  n->function.body = body;
   return n;
 }
