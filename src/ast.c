@@ -214,3 +214,10 @@ Ast *ast_function(Arena *arena, Ast *decl, Ast *body) {
   n->function.body = body;
   return n;
 }
+Ast *ast_return(Arena *arena, Some value) {
+  Ast *n = ast_new(arena, AST_RETURN);
+
+  n->ret.value = value;
+
+  return n;
+}

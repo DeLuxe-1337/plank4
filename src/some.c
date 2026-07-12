@@ -1,6 +1,8 @@
 #include "some.h"
+#include "null.h"
 
-Some some(void *value, bool nil) {
-  Some s = {value, nil};
+Some some(void *value) {
+
+  Some s = {value, value == NULL ? true : false};
   return s;
 }

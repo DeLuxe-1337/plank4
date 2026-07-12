@@ -18,7 +18,7 @@ void visitor_cleanup(Visitor *v) {
   LLVMDisposeModule(v->module);
 }
 
-Some visit_expr(Visitor *v, Ast *n) { return some(NULL, true); }
+Some visit_expr(Visitor *v, Ast *n) { return some(NULL); }
 
 LLVMTypeRef resolve_typekind(TypeKind kind) {
   switch (kind) {

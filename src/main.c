@@ -1,5 +1,6 @@
 #include "arena.h"
 #include "ast.h"
+#include "parser.h"
 #include "tokenizer.h"
 #include "visitor.h"
 #include <llvm-c/Core.h>
@@ -18,24 +19,12 @@ int main(void) {
       .column = 1,
   };
 
-  Token tok;
-
-  do {
-    tok = lexer_next(&lex);
-
-    printf("%-20s '%.*s' (%u:%u)\n", token_kind_name(tok.kind), (int)tok.length,
-           tok.begin, tok.line, tok.column);
-
-  } while (tok.kind != TOK_EOF);
-
   Arena arena;
   arena_init(&arena, sizeof(Ast));
 
-  Token plus = make_token(&lex, TOK_PLUS, NULL, 0, 0);
+  Parser *p = parser_create(&arena, &lex);
 
-  Ast *stmt = ast_function(&arena, ast_identifier(&arena, SV("main")), NULL);
-
-  ast_print(stmt, 0);
+  Ast *stmt = parse_stmt(p);
 
   Visitor *visitor = visitor_create(&arena, "module");
   visit_stmt(visitor, stmt);

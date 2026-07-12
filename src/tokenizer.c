@@ -9,16 +9,16 @@ int is_alpha(char c) {
 int is_digit(char c) { return c >= '0' && c <= '9'; }
 int is_alnum(char c) { return is_alpha(c) || is_digit(c); }
 
-char peek(Lexer *lex) { return *lex->current; }
+char l_peek(Lexer *lex) { return *lex->current; }
 
-char peek_next(Lexer *lex) {
+char l_peek_next(Lexer *lex) {
   if (lex->current[0] == '\0')
     return '\0';
 
   return lex->current[1];
 }
 
-char advance(Lexer *lex) {
+char l_advance(Lexer *lex) {
   char c = *lex->current++;
 
   if (c == '\n') {
@@ -31,11 +31,11 @@ char advance(Lexer *lex) {
   return c;
 }
 
-int match(Lexer *lex, char expected) {
+int l_match(Lexer *lex, char expected) {
   if (*lex->current != expected)
     return 0;
 
-  advance(lex);
+  l_advance(lex);
   return 1;
 }
 
@@ -55,38 +55,38 @@ Token make_token(Lexer *lex, TokenKind kind, const char *begin, unsigned line,
 void skip_space(Lexer *lex) {
   for (;;) {
 
-    switch (peek(lex)) {
+    switch (l_peek(lex)) {
 
     case ' ':
     case '\t':
     case '\r':
-      advance(lex);
+      l_advance(lex);
       break;
 
     case '\n':
-      advance(lex);
+      l_advance(lex);
       break;
 
     case '/':
-      if (peek_next(lex) == '/') {
+      if (l_peek_next(lex) == '/') {
 
-        while (peek(lex) != '\n' && peek(lex) != '\0')
-          advance(lex);
-      } else if (peek_next(lex) == '*') {
+        while (l_peek(lex) != '\n' && l_peek(lex) != '\0')
+          l_advance(lex);
+      } else if (l_peek_next(lex) == '*') {
 
-        advance(lex);
-        advance(lex);
+        l_advance(lex);
+        l_advance(lex);
 
-        while (peek(lex) != '\0') {
+        while (l_peek(lex) != '\0') {
 
-          if (peek(lex) == '*' && peek_next(lex) == '/') {
+          if (l_peek(lex) == '*' && l_peek_next(lex) == '/') {
 
-            advance(lex);
-            advance(lex);
+            l_advance(lex);
+            l_advance(lex);
             break;
           }
 
-          advance(lex);
+          l_advance(lex);
         }
       } else {
         return;
@@ -105,8 +105,8 @@ Token identifier(Lexer *lex) {
   unsigned line = lex->line;
   unsigned column = lex->column;
 
-  while (is_alnum(peek(lex)))
-    advance(lex);
+  while (is_alnum(l_peek(lex)))
+    l_advance(lex);
 
   if (memcmp(begin, "function", 8) == 0)
     return make_token(lex, TOK_FUNCTION, begin, line, column);
@@ -119,15 +119,15 @@ Token number(Lexer *lex) {
   unsigned line = lex->line;
   unsigned column = lex->column;
 
-  while (is_digit(peek(lex)))
-    advance(lex);
+  while (is_digit(l_peek(lex)))
+    l_advance(lex);
 
-  if (peek(lex) == '.' && is_digit(peek_next(lex))) {
+  if (l_peek(lex) == '.' && is_digit(l_peek_next(lex))) {
 
-    advance(lex);
+    l_advance(lex);
 
-    while (is_digit(peek(lex)))
-      advance(lex);
+    while (is_digit(l_peek(lex)))
+      l_advance(lex);
 
     return make_token(lex, TOK_FLOAT, begin, line, column);
   }
@@ -142,7 +142,7 @@ Token lexer_next(Lexer *lex) {
   unsigned line = lex->line;
   unsigned column = lex->column;
 
-  char c = advance(lex);
+  char c = l_advance(lex);
 
   switch (c) {
 
@@ -160,22 +160,22 @@ Token lexer_next(Lexer *lex) {
     return make_token(lex, TOK_RPAREN, begin, line, column);
 
   case '+':
-    if (match(lex, '+'))
+    if (l_match(lex, '+'))
       return make_token(lex, TOK_PLUS_PLUS, begin, line, column);
 
-    if (match(lex, '='))
+    if (l_match(lex, '='))
       return make_token(lex, TOK_PLUS_EQUAL, begin, line, column);
 
     return make_token(lex, TOK_PLUS, begin, line, column);
 
   case '-':
-    if (match(lex, '>'))
+    if (l_match(lex, '>'))
       return make_token(lex, TOK_ARROW, begin, line, column);
 
-    if (match(lex, '-'))
+    if (l_match(lex, '-'))
       return make_token(lex, TOK_MINUS_MINUS, begin, line, column);
 
-    if (match(lex, '='))
+    if (l_match(lex, '='))
       return make_token(lex, TOK_MINUS_EQUAL, begin, line, column);
 
     return make_token(lex, TOK_MINUS, begin, line, column);
@@ -194,10 +194,4 @@ Token lexer_next(Lexer *lex) {
   }
 
   return make_token(lex, TOK_UNKNOWN, begin, line, column);
-}
-const char *token_kind_name(TokenKind kind) {
-  if ((unsigned)kind >= TOK_COUNT)
-    return "INVALID_TOKEN";
-
-  return token_kind_names[kind];
 }

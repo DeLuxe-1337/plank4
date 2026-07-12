@@ -8,6 +8,6 @@ typedef struct {
   bool nil;
 } Some;
 
-Some some(void *value, bool nil);
+Some some(void *value);
 
 #endif
