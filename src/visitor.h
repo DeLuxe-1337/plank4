@@ -1,34 +1,20 @@
 #pragma once
 #include "ast.h"
+#include "some.h"
+#include <llvm-c/Core.h>
+#include <llvm-c/Target.h>
+#include <llvm-c/TargetMachine.h>
 #ifndef VISITOR_H
 #define VISITOR_H
 
-void visit_expr(Ast *n);
+typedef struct {
+    LLVMModuleRef module;
+    LLVMBuilderRef builder;
+} Visitor;
 
-void visit_stmt(Ast *n)
-{
-    switch (n->kind) {
+Visitor* visitor_create(const char* name);
 
-    case AST_IF:
-        visit_expr(n->if_stmt.cond);
-        visit_stmt(n->if_stmt.then_stmt);
-
-        if (n->if_stmt.else_stmt)
-            visit_stmt(n->if_stmt.else_stmt);
-        break;
-
-    case AST_BLOCK:
-        // for (...)
-        //     visit_stmt(...);
-        break;
-
-    case AST_RETURN:
-        // visit_expr(...);
-        break;
-
-    default:
-        break;
-    }
-}
+Some visit_expr(Visitor* visitor, Ast *n);
+void visit_stmt(Visitor* visitor, Ast *n);
 
 #endif
