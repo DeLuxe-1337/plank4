@@ -2,6 +2,7 @@
 
 #include "arena.h"
 #include "ast.h"
+#include "error.h"
 #include "token.h"
 
 #ifndef PARSER_H
@@ -38,6 +39,12 @@ static bool match(Parser *p, TokenKind kind) {
     return true;
   }
   return false;
+}
+
+static Token expect(Parser *p, TokenKind kind) {
+  if (!match(p, kind))
+    PARSE_ERROR("Expected token of kind %d", kind);
+  return p->current;
 }
 
 Ast *parse_stmt(Parser *p);

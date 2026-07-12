@@ -1,5 +1,6 @@
 #include "visitor.h"
 #include "ast.h"
+#include "error.h"
 #include "string_view.h"
 #include "type.h"
 #include <llvm-c-21/llvm-c/Core.h>
@@ -30,7 +31,7 @@ LLVMTypeRef resolve_typekind(TypeKind kind) {
     return LLVMFloatType();
   default:
     fprintf(stderr, "Unable to find type in resolve_type\n");
-    abort();
+    exit(ERR_TYPE_RESOLVE);
   }
 }
 
