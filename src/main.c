@@ -10,7 +10,9 @@
 
 int main(void) {
   printf("Hello, world\n");
-  const char *source = "function main {}";
+  const char *source = "function main {"
+                       "return;"
+                       "}";
 
   Lexer lex = {
       .start = source,

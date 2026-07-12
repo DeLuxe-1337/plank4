@@ -70,6 +70,7 @@ void visit_stmt(Visitor *v, Ast *n) {
       Ast *x = (Ast *)vector_at(&n->block.statements, i);
       visit_stmt(v, x);
     }
+    vector_free(&n->block.statements);
     break;
 
   default:

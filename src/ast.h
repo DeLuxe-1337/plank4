@@ -129,5 +129,6 @@ Ast *ast_integer(Arena *arena, uint64_t value);
 Ast *ast_binary(Arena *arena, Token op, Ast *lhs, Ast *rhs);
 Ast *ast_function(Arena *arena, Ast *decl, Ast *body);
 Ast *ast_return(Arena *arena, Some value);
+Ast *ast_block(Arena *arena);
 
 #endif

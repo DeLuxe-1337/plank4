@@ -1,5 +1,6 @@
 #include "ast.h"
 #include "type.h"
+#include "vector.h"
 
 #pragma once
 
@@ -212,6 +213,12 @@ Ast *ast_function(Arena *arena, Ast *decl, Ast *body) {
 
   n->function.decl = decl;
   n->function.body = body;
+  return n;
+}
+Ast *ast_block(Arena *arena) {
+  Ast *n = ast_new(arena, AST_BLOCK);
+  n->block.statements = vector_init(Ast *);
+
   return n;
 }
 Ast *ast_return(Arena *arena, Some value) {

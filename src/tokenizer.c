@@ -111,6 +111,9 @@ Token identifier(Lexer *lex) {
   if (memcmp(begin, "function", 8) == 0)
     return make_token(lex, TOK_FUNCTION, begin, line, column);
 
+  if (memcmp(begin, "return", 6) == 0)
+    return make_token(lex, TOK_RETURN, begin, line, column);
+
   return make_token(lex, TOK_IDENTIFIER, begin, line, column);
 }
 
@@ -145,7 +148,8 @@ Token lexer_next(Lexer *lex) {
   char c = l_advance(lex);
 
   switch (c) {
-
+  case ';':
+    return make_token(lex, TOK_SEMICOLON, begin, line, column);
   case '\0':
     return make_token(lex, TOK_EOF, begin, line, column);
   case '{':

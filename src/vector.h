@@ -17,7 +17,7 @@ static inline Vector vector_create(size_t elem_size) {
   return (Vector){.elem_size = elem_size};
 }
 
-static inline void vector_destroy(Vector *v) {
+static inline void vector_free(Vector *v) {
   free(v->data);
 
   v->data = NULL;
