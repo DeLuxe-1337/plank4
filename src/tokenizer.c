@@ -195,3 +195,9 @@ Token lexer_next(Lexer *lex) {
 
   return make_token(lex, TOK_UNKNOWN, begin, line, column);
 }
+const char *token_kind_name(TokenKind kind) {
+  if ((unsigned)kind >= TOK_COUNT)
+    return "INVALID_TOKEN";
+
+  return token_kind_names[kind];
+}

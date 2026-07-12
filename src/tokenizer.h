@@ -90,12 +90,7 @@ static const char *const token_kind_names[TOK_COUNT] = {
 #undef X
 };
 
-// const char *token_kind_name(TokenKind kind) {
-//   if ((unsigned)kind >= TOK_COUNT)
-//     return "INVALID_TOKEN";
-
-//   return token_kind_names[kind];
-// }
+const char *token_kind_name(TokenKind kind);
 
 typedef struct {
   TokenKind kind;
@@ -129,7 +124,7 @@ static char advance(Lexer *lex);
 
 static int match(Lexer *lex, char expected);
 
-static Token make_token(Lexer *lex, TokenKind kind, const char *begin,
+Token make_token(Lexer *lex, TokenKind kind, const char *begin,
                         unsigned line, unsigned column);
 
 static void skip_space(Lexer *lex);
