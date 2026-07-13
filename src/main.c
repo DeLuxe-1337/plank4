@@ -10,8 +10,9 @@
 
 int main(void) {
   printf("Hello, world\n");
-  const char *source = "function main {"
-                       "return;"
+  const char *source = "function void_value {return 0;};"
+                       "function main {"
+                       "return 1;"
                        "}";
 
   Lexer lex = {
@@ -26,10 +27,18 @@ int main(void) {
 
   Parser *p = parser_create(&arena, &lex);
 
-  Ast *stmt = parse_stmt(p);
+  Ast *stmt = NULL;
 
   Visitor *visitor = visitor_create(&arena, "module");
-  visit_stmt(visitor, stmt);
+
+  while (!p->eof) {
+    stmt = parse_stmt(p);
+
+    if (p->eof || stmt->kind == EOF)
+      break;
+
+    visit_stmt(visitor, stmt);
+  }
 
   // Initialize LLVM targets
   LLVMInitializeNativeTarget();

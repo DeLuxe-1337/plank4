@@ -3,6 +3,7 @@
 #include "arena.h"
 #include "ast.h"
 #include "error.h"
+#include "some.h"
 #include "token.h"
 
 #ifndef PARSER_H
@@ -63,6 +64,7 @@ static Token expect(Parser *p, const char *expected, TokenKind kind) {
   return old;
 }
 
+Some parse_expr(Parser *p);
 Ast *parse_stmt(Parser *p);
 Ast *parse_return_stmt(Parser *p);
 Ast *parse_function_stmt(Parser *p);

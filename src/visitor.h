@@ -8,15 +8,15 @@
 #define VISITOR_H
 
 typedef struct {
-    LLVMModuleRef module;
-    LLVMBuilderRef builder;
-    Arena* arena;
+  LLVMModuleRef module;
+  LLVMBuilderRef builder;
+  Arena *arena;
 } Visitor;
 
-Visitor* visitor_create(Arena* arena, const char* name);
+Visitor *visitor_create(Arena *arena, const char *name);
 void visitor_cleanup(Visitor *v);
 
-Some visit_expr(Visitor* visitor, Ast *n);
-void visit_stmt(Visitor* visitor, Ast *n);
+LLVMValueRef visit_expr(Visitor *visitor, Ast *n);
+void visit_stmt(Visitor *visitor, Ast *n);
 
 #endif

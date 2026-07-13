@@ -19,12 +19,14 @@ void visitor_cleanup(Visitor *v) {
   LLVMDisposeModule(v->module);
 }
 
-Some visit_expr(Visitor *v, Ast *n) { return some(NULL); }
+static inline LLVMValueRef resolve_default_void() {
+  return LLVMConstNull(LLVMInt32Type());
+}
 
 LLVMTypeRef resolve_typekind(TypeKind kind) {
   switch (kind) {
   case TYPE_VOID:
-    return LLVMVoidType();
+    return LLVMTypeOf(resolve_default_void());
   case TYPE_INT:
     return LLVMInt32Type();
   case TYPE_FLOAT:
@@ -35,14 +37,29 @@ LLVMTypeRef resolve_typekind(TypeKind kind) {
   }
 }
 
+LLVMValueRef visit_expr(Visitor *v, Ast *n) {
+  LLVMValueRef retv = resolve_default_void();
+  printf("-> visit expr(%s)\n", ast_kind_name(n->kind));
+  ast_print(n, 0);
+  switch (n->kind) {
+  case AST_INTEGER:
+    retv = LLVMConstInt(resolve_typekind(TYPE_INT), n->integer.value, false);
+    break;
+  }
+  const char *retv_llvm_message = LLVMPrintValueToString(retv);
+  printf("<- expr retv(%s)\n", retv_llvm_message);
+  LLVMDisposeMessage(retv_llvm_message);
+  return retv;
+}
+
 void visit_stmt(Visitor *v, Ast *n) {
+  printf("-> visit stmt(%s)\n", ast_kind_name(n->kind));
   ast_print(n, 0);
 
   switch (n->kind) {
 
   case AST_FUNCTION:; // solve c23 ext warning
     char *name = arena_sv_to_cstr(v->arena, n->function.decl->identifier.name);
-    printf("function %s\n", name);
 
     bool isVararg = n->type->function.variadic;
     LLVMTypeRef returnType =
@@ -59,18 +76,30 @@ void visit_stmt(Visitor *v, Ast *n) {
     if (n->function.body != NULL)
       visit_stmt(v, n->function.body);
 
-    if (returnType == LLVMVoidType()) {
-      LLVMBuildRetVoid(v->builder);
-    }
+    // if (returnType == LLVMVoidType()) {
+    //   LLVMBuildRetVoid(v->builder);
+    // }
 
     break;
 
   case AST_BLOCK:
     for (size_t i = 0; i < n->block.statements.len; i++) {
-      Ast *x = (Ast *)vector_at(&n->block.statements, i);
+      Ast *x = vector_get(Ast *, &n->block.statements, i);
+
       visit_stmt(v, x);
     }
     vector_free(&n->block.statements);
+    break;
+  case AST_RETURN:
+    Some expr = n->ret.value;
+    LLVMValueRef value = resolve_default_void();
+
+    if (!expr.nil) {
+      value = visit_expr(v, expr.ptr);
+    }
+
+    LLVMBuildRet(v->builder, value);
+
     break;
 
   default:

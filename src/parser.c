@@ -3,10 +3,17 @@
 #include "string_view.h"
 #include "token.h"
 #include "vector.h"
+#include <stdlib.h>
 
 Ast *parse_return_stmt(Parser *p) {
+  Some expr = some(NULL);
+  if (match(p, TOK_SEMICOLON)) {
+    return ast_return(p->arena, expr);
+  }
+
+  expr = parse_expr(p);
   expect(p, "ret semicolon", TOK_SEMICOLON);
-  return ast_return(p->arena, some(NULL));
+  return ast_return(p->arena, expr);
 }
 Ast *parse_function_stmt(Parser *p) {
   Token identifier = expect(p, "function stmt", TOK_IDENTIFIER);
@@ -49,4 +56,18 @@ Ast *parse_stmt(Parser *p) {
   advance(p);
 
   return parse_stmt(p);
+}
+Some parse_expr(Parser *p) {
+  if (p->eof)
+    return some(NULL);
+
+  if (check(p, TOK_INTEGER)) {
+    Token integerToken = advance(p);
+    uint64_t integer = atoi(arena_sv_to_cstr(
+        p->arena, sv_from_parts(integerToken.begin, integerToken.length)));
+
+    return some(ast_integer(p->arena, integer));
+  }
+
+  return some(NULL);
 }
