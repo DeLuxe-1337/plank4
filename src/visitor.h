@@ -13,6 +13,9 @@ typedef struct {
   Arena *arena;
 } Visitor;
 
+LLVMTypeRef resolve_typekind(TypeKind kind);
+LLVMValueRef resolve_default_void();
+
 Visitor *visitor_create(Arena *arena, const char *name);
 void visitor_cleanup(Visitor *v);
 

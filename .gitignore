@@ -2,3 +2,4 @@ bin/*
 obj/*
 .vscode/c_cpp_properties.json
 main.s
+src/.main.c.swp

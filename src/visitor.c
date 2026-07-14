@@ -19,16 +19,14 @@ void visitor_cleanup(Visitor *v) {
   LLVMDisposeModule(v->module);
 }
 
-static inline LLVMValueRef resolve_default_void() {
-  return LLVMConstNull(LLVMInt32Type());
-}
+LLVMValueRef resolve_default_void() { return LLVMConstPointerNull(LLVMVoidType()); }
 
 LLVMTypeRef resolve_typekind(TypeKind kind) {
   switch (kind) {
   case TYPE_VOID:
     return LLVMTypeOf(resolve_default_void());
   case TYPE_INT:
-    return LLVMInt32Type();
+    return LLVMIntType(8);
   case TYPE_FLOAT:
     return LLVMFloatType();
   default:
@@ -46,7 +44,7 @@ LLVMValueRef visit_expr(Visitor *v, Ast *n) {
     retv = LLVMConstInt(resolve_typekind(TYPE_INT), n->integer.value, false);
     break;
   }
-  const char *retv_llvm_message = LLVMPrintValueToString(retv);
+  char *retv_llvm_message = LLVMPrintValueToString(retv);
   printf("<- expr retv(%s)\n", retv_llvm_message);
   LLVMDisposeMessage(retv_llvm_message);
   return retv;

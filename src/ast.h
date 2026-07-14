@@ -78,6 +78,10 @@ struct Ast {
     } function;
 
     struct {
+      Vector fields;
+    } structure;
+
+    struct {
       Token op;
       Ast *lhs;
       Ast *rhs;

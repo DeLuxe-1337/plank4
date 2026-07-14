@@ -10,8 +10,7 @@
 
 int main(void) {
   printf("Hello, world\n");
-  const char *source = "function void_value {return 0;};"
-                       "function main {"
+  const char *source = "function main {"
                        "return 1;"
                        "}";
 

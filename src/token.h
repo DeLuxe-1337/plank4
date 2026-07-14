@@ -21,6 +21,7 @@
   X(WHILE)                                                                     \
   X(RETURN)                                                                    \
   X(FUNCTION)                                                                  \
+  X(STRUCT)                                                                    \
                                                                                \
   /* punctuation */                                                            \
   X(LPAREN)                                                                    \
