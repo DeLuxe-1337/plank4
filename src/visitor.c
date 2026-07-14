@@ -19,7 +19,9 @@ void visitor_cleanup(Visitor *v) {
   LLVMDisposeModule(v->module);
 }
 
-LLVMValueRef resolve_default_void() { return LLVMConstPointerNull(LLVMVoidType()); }
+LLVMValueRef resolve_default_void() {
+  return LLVMConstPointerNull(LLVMVoidType());
+}
 
 LLVMTypeRef resolve_typekind(TypeKind kind) {
   switch (kind) {
@@ -71,12 +73,9 @@ void visit_stmt(Visitor *v, Ast *n) {
 
     LLVMPositionBuilderAtEnd(v->builder, entry);
 
-    if (n->function.body != NULL)
+    if (n->function.body != NULL) {
       visit_stmt(v, n->function.body);
-
-    // if (returnType == LLVMVoidType()) {
-    //   LLVMBuildRetVoid(v->builder);
-    // }
+    }
 
     break;
 

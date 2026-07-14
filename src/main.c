@@ -60,8 +60,8 @@ int main(void) {
                               LLVMRelocDefault, LLVMCodeModelDefault);
 
   // Emit object file
-  if (LLVMTargetMachineEmitToFile(machine, visitor->module, "main.s",
-                                  LLVMAssemblyFile, &error)) {
+  if (LLVMTargetMachineEmitToFile(machine, visitor->module, "main.o",
+                                  LLVMObjectFile, &error)) {
     fprintf(stderr, "%s\n", error);
     return 1;
   }

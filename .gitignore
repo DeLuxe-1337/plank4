@@ -1,5 +1,8 @@
 bin/*
 obj/*
-.vscode/c_cpp_properties.json
-main.s
+*.s
 src/.main.c.swp
+*.out
+.gitignore
+*.o
+main
