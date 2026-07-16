@@ -2,6 +2,7 @@
 #include "ast.h"
 #include "error.h"
 #include "string_view.h"
+#include "symbol.h"
 #include "type.h"
 #include <llvm-c-21/llvm-c/Core.h>
 #include <stdio.h>
@@ -52,6 +53,39 @@ LLVMValueRef visit_expr(Visitor *v, Ast *n) {
   return retv;
 }
 
+LLVMTypeRef get_return_type(Ast *n) {
+  for (size_t i = 0; i < n->block.statements.len; i++) {
+    Ast *x = vector_get(Ast *, &n->block.statements, i);
+    if (x->kind == AST_RETURN && !x->ret.value.nil && x->ret.value.ptr) {
+      Ast *ret = ((Ast *)x->ret.value.ptr);
+      switch (ret->kind) {
+      case AST_INTEGER:
+        return resolve_typekind(TYPE_INT);
+      }
+    }
+  }
+
+  return resolve_typekind(TYPE_VOID);
+}
+
+bool validate_return_state(Visitor *v, Ast *n) {
+  for (size_t i = 0; i < n->block.statements.len; i++) {
+    Ast *x = vector_get(Ast *, &n->block.statements, i);
+    if (x->kind == AST_RETURN && !x->ret.value.nil && x->ret.value.ptr) {
+      Ast *ret = ((Ast *)x->ret.value.ptr);
+      switch (ret->kind) {
+      case AST_RETURN:
+        return true;
+      }
+    } else if (i == n->block.statements.len - 1) {
+      vector_push(&n->block.statements, ast_return(v->arena, some(NULL)));
+      return false;
+    }
+  }
+
+  return false;
+}
+
 void visit_stmt(Visitor *v, Ast *n) {
   printf("-> visit stmt(%s)\n", ast_kind_name(n->kind));
   ast_print(n, 0);
@@ -62,16 +96,19 @@ void visit_stmt(Visitor *v, Ast *n) {
     char *name = arena_sv_to_cstr(v->arena, n->function.decl->identifier.name);
 
     bool isVararg = n->type->function.variadic;
-    LLVMTypeRef returnType =
-        resolve_typekind(n->type->function.return_type->kind);
+    // bool confirmReturnState = validate_return_state(v, n);
+    LLVMTypeRef returnType = get_return_type(n->function.body);
+    // resolve_typekind(n->type->function.return_type->kind);
+
     LLVMTypeRef functionType =
         LLVMFunctionType(returnType, NULL, 0, (int)isVararg);
 
     LLVMValueRef function = LLVMAddFunction(v->module, name, functionType);
-
+    
     LLVMBasicBlockRef entry = LLVMAppendBasicBlock(function, "entry");
-
+    
     LLVMPositionBuilderAtEnd(v->builder, entry);
+    
 
     if (n->function.body != NULL) {
       visit_stmt(v, n->function.body);
