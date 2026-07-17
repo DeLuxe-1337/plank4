@@ -3,6 +3,7 @@
 #include "parser.h"
 #include "tokenizer.h"
 #include "visitor.h"
+#include <llvm-c/Analysis.h>
 #include <llvm-c/Core.h>
 #include <llvm-c/Target.h>
 #include <llvm-c/TargetMachine.h>
@@ -10,7 +11,8 @@
 
 int main(void) {
   printf("Hello, world\n");
-  const char *source = "function foo {}\n"
+  const char *source = ""
+                       //  "function foo {}\n"
                        "function main {"
                        "return 1;"
                        "}";
@@ -41,8 +43,10 @@ int main(void) {
   }
 
   // Initialize LLVM targets
+
   LLVMInitializeNativeTarget();
   LLVMInitializeNativeAsmPrinter();
+  LLVMInitializeNativeAsmParser();
 
   // Get the host target
   char *triple = LLVMGetDefaultTargetTriple();
@@ -67,11 +71,16 @@ int main(void) {
     return 1;
   }
 
+  if (LLVMVerifyModule(visitor->module, LLVMReturnStatusAction, &error)) {
+    fprintf(stderr, "%s\n", error);
+  }
+
   char *ir = LLVMPrintModuleToString(visitor->module);
   printf("%s\n", ir);
 
   LLVMDisposeMessage(ir);
   LLVMDisposeMessage(triple);
+  LLVMDisposeMessage(error);
   LLVMDisposeTargetMachine(machine);
   visitor_cleanup(visitor);
   arena_destroy(&arena);

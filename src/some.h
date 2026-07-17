@@ -10,4 +10,6 @@ typedef struct {
 
 Some some(void *value);
 
+typedef Some SomeValueRef;
+
 #endif

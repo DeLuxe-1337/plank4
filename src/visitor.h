@@ -14,12 +14,12 @@ typedef struct {
 } Visitor;
 
 LLVMTypeRef resolve_typekind(TypeKind kind);
-LLVMValueRef resolve_default_void();
+// LLVMValueRef resolve_default_void();
 
 Visitor *visitor_create(Arena *arena, const char *name);
 void visitor_cleanup(Visitor *v);
 
-LLVMValueRef visit_expr(Visitor *visitor, Ast *n);
+SomeValueRef visit_expr(Visitor *visitor, Ast *n);
 void visit_stmt(Visitor *visitor, Ast *n);
 
 #endif

@@ -20,16 +20,12 @@ void visitor_cleanup(Visitor *v) {
   LLVMDisposeModule(v->module);
 }
 
-LLVMValueRef resolve_default_void() {
-  return LLVMConstPointerNull(LLVMVoidType());
-}
-
 LLVMTypeRef resolve_typekind(TypeKind kind) {
   switch (kind) {
   case TYPE_VOID:
-    return LLVMTypeOf(resolve_default_void());
+    return LLVMVoidType();
   case TYPE_INT:
-    return LLVMIntType(8);
+    return LLVMIntType(32);
   case TYPE_FLOAT:
     return LLVMFloatType();
   default:
@@ -38,16 +34,18 @@ LLVMTypeRef resolve_typekind(TypeKind kind) {
   }
 }
 
-LLVMValueRef visit_expr(Visitor *v, Ast *n) {
-  LLVMValueRef retv = resolve_default_void();
+SomeValueRef visit_expr(Visitor *v, Ast *n) {
+  SomeValueRef retv = some(NULL);
   printf("-> visit expr(%s)\n", ast_kind_name(n->kind));
   ast_print(n, 0);
   switch (n->kind) {
   case AST_INTEGER:
-    retv = LLVMConstInt(resolve_typekind(TYPE_INT), n->integer.value, false);
+    retv.ptr =
+        LLVMConstInt(resolve_typekind(TYPE_INT), n->integer.value, false);
+    retv.nil = false;
     break;
   }
-  char *retv_llvm_message = LLVMPrintValueToString(retv);
+  char *retv_llvm_message = LLVMPrintValueToString(retv.ptr);
   printf("<- expr retv(%s)\n", retv_llvm_message);
   LLVMDisposeMessage(retv_llvm_message);
   return retv;
@@ -88,8 +86,8 @@ bool validate_return_state(Visitor *v, Ast *n) {
         return true;
       }
     } else if (i == n->block.statements.len - 1) {
-      PUSH_RET:
-      Ast *default_ret = ast_return(v->arena, some(resolve_default_void()));
+    PUSH_RET:
+      Ast *default_ret = ast_return(v->arena, some(NULL));
       vector_push(&n->block.statements, &default_ret);
       return false;
     }
@@ -137,13 +135,13 @@ void visit_stmt(Visitor *v, Ast *n) {
     break;
   case AST_RETURN:
     Some expr = n->ret.value;
-    LLVMValueRef value = resolve_default_void();
+    SomeValueRef value = some(NULL);
 
     if (!expr.nil) {
       value = visit_expr(v, expr.ptr);
-    }
-
-    LLVMBuildRet(v->builder, value);
+      LLVMBuildRet(v->builder, value.ptr);
+    } else
+      LLVMBuildRetVoid(v->builder);
 
     break;
 
