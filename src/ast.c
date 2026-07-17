@@ -136,6 +136,7 @@ Ast *ast_function(Arena *arena, Ast *decl, Ast *body) {
 Ast *ast_block(Arena *arena) {
   Ast *n = ast_new(arena, AST_BLOCK);
   n->block.statements = vector_init(Ast *);
+  vector_reserve(&n->block.statements, 16);
 
   return n;
 }

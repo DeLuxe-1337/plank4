@@ -6,6 +6,7 @@
 #include "tokenizer.h"
 #include "type.h"
 #include "vector.h"
+#include <stdalign.h>
 #ifndef AST_H
 #define AST_H
 
@@ -120,7 +121,8 @@ struct Ast {
       Some value;
     } ret;
   };
-};
+} __attribute__((aligned(8)));
+
 static void ast_print_indent(int depth) {
   for (int i = 0; i < depth; ++i)
     printf("    ");

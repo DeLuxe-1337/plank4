@@ -54,31 +54,43 @@ LLVMValueRef visit_expr(Visitor *v, Ast *n) {
 }
 
 LLVMTypeRef get_return_type(Ast *n) {
+  if (n->block.statements.len == 0)
+    goto RET_VOID;
+
   for (size_t i = 0; i < n->block.statements.len; i++) {
     Ast *x = vector_get(Ast *, &n->block.statements, i);
-    if (x->kind == AST_RETURN && !x->ret.value.nil && x->ret.value.ptr) {
+    if (x != NULL && x->kind == AST_RETURN && x->ret.value.nil == false) {
       Ast *ret = ((Ast *)x->ret.value.ptr);
       switch (ret->kind) {
       case AST_INTEGER:
         return resolve_typekind(TYPE_INT);
+      default:
+        return resolve_typekind(TYPE_VOID);
       }
     }
   }
+
+RET_VOID:
 
   return resolve_typekind(TYPE_VOID);
 }
 
 bool validate_return_state(Visitor *v, Ast *n) {
+  if (n->block.statements.len == 0)
+    goto PUSH_RET;
+
   for (size_t i = 0; i < n->block.statements.len; i++) {
     Ast *x = vector_get(Ast *, &n->block.statements, i);
-    if (x->kind == AST_RETURN && !x->ret.value.nil && x->ret.value.ptr) {
+    if (x != NULL && x->kind == AST_RETURN && x->ret.value.nil == false) {
       Ast *ret = ((Ast *)x->ret.value.ptr);
       switch (ret->kind) {
       case AST_RETURN:
         return true;
       }
     } else if (i == n->block.statements.len - 1) {
-      vector_push(&n->block.statements, ast_return(v->arena, some(NULL)));
+      PUSH_RET:
+      Ast *default_ret = ast_return(v->arena, some(resolve_default_void()));
+      vector_push(&n->block.statements, &default_ret);
       return false;
     }
   }
@@ -96,7 +108,7 @@ void visit_stmt(Visitor *v, Ast *n) {
     char *name = arena_sv_to_cstr(v->arena, n->function.decl->identifier.name);
 
     bool isVararg = n->type->function.variadic;
-    // bool confirmReturnState = validate_return_state(v, n);
+    bool confirmReturnState = validate_return_state(v, n->function.body);
     LLVMTypeRef returnType = get_return_type(n->function.body);
     // resolve_typekind(n->type->function.return_type->kind);
 
@@ -104,11 +116,10 @@ void visit_stmt(Visitor *v, Ast *n) {
         LLVMFunctionType(returnType, NULL, 0, (int)isVararg);
 
     LLVMValueRef function = LLVMAddFunction(v->module, name, functionType);
-    
+
     LLVMBasicBlockRef entry = LLVMAppendBasicBlock(function, "entry");
-    
+
     LLVMPositionBuilderAtEnd(v->builder, entry);
-    
 
     if (n->function.body != NULL) {
       visit_stmt(v, n->function.body);
