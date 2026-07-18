@@ -25,7 +25,7 @@ int main(void) {
   };
 
   Arena arena;
-  arena_init(&arena, sizeof(Ast));
+  arena_init(&arena, 8);
 
   Parser *p = parser_create(&arena, &lex);
 

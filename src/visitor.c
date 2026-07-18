@@ -43,10 +43,15 @@ SomeValueRef visit_expr(Visitor *v, Ast *n) {
         LLVMConstInt(resolve_typekind(TYPE_INT), n->integer.value, false);
     retv.nil = false;
     break;
+  default:
+    break;
   }
-  char *retv_llvm_message = LLVMPrintValueToString(retv.ptr);
-  printf("<- expr retv(%s)\n", retv_llvm_message);
-  LLVMDisposeMessage(retv_llvm_message);
+
+  { // Really nice debug information
+    char *retv_llvm_message = LLVMPrintValueToString(retv.ptr);
+    printf("<- expr retv(%s)\n", retv_llvm_message);
+    LLVMDisposeMessage(retv_llvm_message);
+  }
   return retv;
 }
 
