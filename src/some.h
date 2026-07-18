@@ -1,7 +1,7 @@
 #ifndef SOME_H
 #define SOME_H
 
-#include "bool.h"
+#include <stdbool.h>
 
 typedef struct {
   void *ptr;

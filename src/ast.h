@@ -1,6 +1,6 @@
 #pragma once
 #include "arena.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "some.h"
 #include "symbol.h"
 #include "tokenizer.h"

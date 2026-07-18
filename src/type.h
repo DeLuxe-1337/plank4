@@ -1,8 +1,8 @@
 #pragma once
 #include "arena.h"
-#include "bool.h"
 #include "string_view.h"
 #include "vector.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #ifndef TYPE_H
 #define TYPE_H

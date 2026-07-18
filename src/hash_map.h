@@ -5,8 +5,8 @@
 
 #include <stddef.h>
 
-#include "bool.h"
 #include "string_view.h"
+#include <stdbool.h>
 
 typedef struct {
   StringView key;

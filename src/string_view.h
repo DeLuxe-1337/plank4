@@ -3,7 +3,7 @@
 #ifndef STRING_VIEW_H
 #define STRING_VIEW_H
 
-#include "bool.h"
+#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 
