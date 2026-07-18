@@ -4,8 +4,6 @@
 #include "vector.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#ifndef TYPE_H
-#define TYPE_H
 
 typedef enum {
   TYPE_VOID,
@@ -57,5 +55,3 @@ struct Type {
 };
 
 Type *type_new(Arena *arena, TypeKind kind);
-
-#endif

@@ -1,7 +1,5 @@
 #pragma once
 #include <stdio.h>
-#ifndef ARENA_H
-#define ARENA_H
 
 #include "alignment.h"
 #include <assert.h>
@@ -120,5 +118,3 @@ static inline void arena_destroy(Arena *arena) {
 
 #define arena_new_array_zero(arena, Type, count)                               \
   ((Type *)arena_calloc((arena), (count), sizeof(Type)))
-
-#endif

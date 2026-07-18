@@ -1,6 +1,4 @@
 #pragma once
-#ifndef HASH_H
-#define HASH_H
 
 #include "string_view.h"
 #include <stddef.h>
@@ -16,5 +14,3 @@ static uint32_t hash(StringView view) {
 
   return h;
 }
-
-#endif

@@ -1,6 +1,4 @@
 #pragma once
-#ifndef VECTOR_H
-#define VECTOR_H
 
 #include "arena.h"
 #include <assert.h>
@@ -116,5 +114,3 @@ static inline void *vector_end(Vector *v) {
 #define vector_get(type, v, i) (*(type *)vector_at((v), (i)))
 
 #define vector_back_value(type, v) (*(type *)vector_back((v)))
-
-#endif

@@ -1,6 +1,4 @@
-#ifndef SOME_H
-#define SOME_H
-
+#pragma once
 #include <stdbool.h>
 
 typedef struct {
@@ -11,5 +9,3 @@ typedef struct {
 Some some(void *value);
 
 typedef Some SomeValueRef;
-
-#endif

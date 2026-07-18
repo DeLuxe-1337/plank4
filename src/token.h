@@ -1,6 +1,4 @@
 #pragma once
-#ifndef TOKEN_H
-#define TOKEN_H
 
 #define TOKEN_LIST(X)                                                          \
   X(EOF)                                                                       \
@@ -95,5 +93,3 @@ static const char *token_kind_name(TokenKind kind) {
 
   return token_kind_names[kind];
 }
-
-#endif

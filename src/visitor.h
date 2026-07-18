@@ -4,8 +4,6 @@
 #include <llvm-c/Core.h>
 #include <llvm-c/Target.h>
 #include <llvm-c/TargetMachine.h>
-#ifndef VISITOR_H
-#define VISITOR_H
 
 typedef struct {
   LLVMModuleRef module;
@@ -21,5 +19,3 @@ void visitor_cleanup(Visitor *v);
 
 SomeValueRef visit_expr(Visitor *visitor, Ast *n);
 void visit_stmt(Visitor *visitor, Ast *n);
-
-#endif

@@ -1,14 +1,12 @@
 #pragma once
 #include "arena.h"
-#include <stdbool.h>
 #include "some.h"
 #include "symbol.h"
 #include "tokenizer.h"
 #include "type.h"
 #include "vector.h"
 #include <stdalign.h>
-#ifndef AST_H
-#define AST_H
+#include <stdbool.h>
 
 typedef enum {
   AST_TRANSLATION_UNIT,
@@ -223,5 +221,3 @@ Ast *ast_binary(Arena *arena, Token op, Ast *lhs, Ast *rhs);
 Ast *ast_function(Arena *arena, Ast *decl, Ast *body);
 Ast *ast_return(Arena *arena, Some value);
 Ast *ast_block(Arena *arena);
-
-#endif

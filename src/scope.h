@@ -7,9 +7,6 @@
 #include "string_view.h"
 #include "symbol.h"
 
-#ifndef SCOPE_H
-#define SCOPE_H
-
 typedef struct Scope Scope;
 
 typedef enum {
@@ -141,5 +138,3 @@ static inline Symbol *lookup_tag(SemanticContext *ctx, StringView name) {
 static inline Symbol *lookup_label(SemanticContext *ctx, StringView name) {
   return scope_lookup(ctx->current, SCOPE_LABEL, name);
 }
-
-#endif

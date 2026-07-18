@@ -6,9 +6,6 @@
 #include "some.h"
 #include "token.h"
 
-#ifndef PARSER_H
-#define PARSER_H
-
 typedef struct {
   Lexer *lexer;
   Token current;
@@ -69,5 +66,3 @@ Ast *parse_stmt(Parser *p);
 Ast *parse_return_stmt(Parser *p);
 Ast *parse_function_stmt(Parser *p);
 Ast *parse_block_stmt(Parser *p);
-
-#endif

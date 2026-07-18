@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef HASHMAP_H
-#define HASHMAP_H
-
 #include <stddef.h>
 
 #include "string_view.h"
@@ -33,5 +30,3 @@ void *hashmap_get(HashMap *map, StringView key);
 void hashmap_put(HashMap *map, StringView key, void *value);
 
 bool hashmap_contains(HashMap *map, StringView key);
-
-#endif

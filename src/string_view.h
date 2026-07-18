@@ -1,7 +1,5 @@
 #pragma once
 #include "arena.h"
-#ifndef STRING_VIEW_H
-#define STRING_VIEW_H
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -38,5 +36,3 @@ static char *arena_sv_to_cstr(Arena *arena, StringView sv) {
 
   return s;
 }
-
-#endif

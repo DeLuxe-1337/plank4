@@ -1,6 +1,4 @@
-// #pragma once
-#ifndef TOKENIZER_H
-#define TOKENIZER_H
+#pragma once
 #include "hash.h"
 #include "token.h"
 #include <stddef.h>
@@ -47,5 +45,3 @@ static Token identifier(Lexer *lex);
 static Token number(Lexer *lex);
 
 Token lexer_next(Lexer *lex);
-
-#endif
