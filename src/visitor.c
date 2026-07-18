@@ -4,7 +4,6 @@
 #include "string_view.h"
 #include "symbol.h"
 #include "type.h"
-#include <llvm-c-21/llvm-c/Core.h>
 #include <stdio.h>
 
 Visitor *visitor_create(Arena *arena, const char *name) {
@@ -131,7 +130,7 @@ void visit_stmt(Visitor *v, Ast *n) {
 
       visit_stmt(v, x);
     }
-    vector_free(&n->block.statements);
+    vector_free(&n->block.statements); // comfortable lifetime; (for now)
     break;
   case AST_RETURN:
     Some expr = n->ret.value;
