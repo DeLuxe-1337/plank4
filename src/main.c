@@ -1,3 +1,5 @@
+#define ARENA_DEFAULT_BLOCK_SIZE 32 * 1024
+
 #include "arena.h"
 #include "ast.h"
 #include "parser.h"
@@ -8,7 +10,6 @@
 #include <llvm-c/Target.h>
 #include <llvm-c/TargetMachine.h>
 #include <stdio.h>
-
 int main(void) {
   printf("Hello, world\n");
   const char *source = ""
@@ -25,7 +26,7 @@ int main(void) {
   };
 
   Arena arena;
-  arena_init(&arena, 8);
+  arena_init(&arena, ARENA_DEFAULT_BLOCK_SIZE);
 
   Parser *p = parser_create(&arena, &lex);
 
