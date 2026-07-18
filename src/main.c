@@ -36,7 +36,7 @@ int main(void) {
   while (!p->eof) {
     stmt = parse_stmt(p);
 
-    if (p->eof || stmt->kind == EOF)
+    if (p->eof)
       break;
 
     visit_stmt(visitor, stmt);
